@@ -57,13 +57,13 @@ def column_to_list(data, index):
     """
       Get a data set and returns just the desired column (removing header)
       Args:
-          param1: The data set
-          param2: The position of the column
+          data: The data set
+          index: The position of the column
       Returns:
           List with the column's data
 
     """
-    return list(map(lambda d: d[index], data))
+    return list(map(lambda columns: columns[index], data))
 
 
 # Let's check with the genders if it's working (only the first 20)
@@ -81,8 +81,8 @@ input("Press Enter to continue...")
 # TASK 4
 # TODO: Count each gender. You should not use a function to do that.
 genders = column_to_list(data_list, -2)
-male_list = list(filter(lambda g: g.lower() == 'male', genders))
-female_list = list(filter(lambda g: g.lower() == 'female', genders))
+male_list = list(filter(lambda gender: gender.lower() == 'male', genders))
+female_list = list(filter(lambda gender: gender.lower() == 'female', genders))
 male = len(male_list)
 female = len(female_list)
 
@@ -103,15 +103,15 @@ def count_gender(data_list):
     """
         Count the genders (Male and Female) in the dataset
         Args:
-            param1: The data set
+            data_list: The data set
         Returns:
             List with the total of males and females in the dataset. 
             First position male and second female
     """
     
     genders = column_to_list(data_list, -2)
-    male_list = list(filter(lambda g: g.lower() == 'male', genders))
-    female_list = list(filter(lambda g: g.lower() == 'female', genders))
+    male_list = list(filter(lambda gender: gender.lower() == 'male', genders))
+    female_list = list(filter(lambda gender: gender.lower() == 'female', genders))
     male = len(male_list)
     female = len(female_list)
     return [male, female]
@@ -135,7 +135,7 @@ def most_popular_gender(data_list):
     """
         Finds out what is the most popular gender in the data set
         Args:
-            param1: The data set
+            data_list: The data set
         Returns:
             String answering the question, what is most common? If it's equal, answers 'Equal'
     """
@@ -177,9 +177,9 @@ input("Press Enter to continue...")
 print("\nTASK 7: Check the chart!")
 
 user_types = column_to_list(data_list, -3)
-customer = len(list(filter(lambda u: u.lower() == 'customer', user_types)))
-dependent = len(list(filter(lambda u: u.lower() == 'dependent', user_types)))
-subscriber = len(list(filter(lambda u: u.lower() == 'subscriber', user_types)))
+customer = len(list(filter(lambda user_type: user_type.lower() == 'customer', user_types)))
+dependent = len(list(filter(lambda user_type: user_type.lower() == 'dependent', user_types)))
+subscriber = len(list(filter(lambda user_type: user_type.lower() == 'subscriber', user_types)))
 
 y_pos = list(range(3))
 plt.bar(y_pos, [customer, dependent, subscriber])
@@ -207,36 +207,40 @@ input("Press Enter to continue...")
 # TASK 9
 # TODO: Find the Minimum, Maximum, Mean and Median trip duration.
 # You should not use ready functions to do that, like max() or min().
-trip_duration_list = list(map(lambda x: float(x), column_to_list(data_list, 2)))
-min_trip = 0.
-max_trip = 0.
-mean_trip = 0.
-median_trip = 0.
-
-min_trip = trip_duration_list[0]
-
-for trip_duration in trip_duration_list:
-    if trip_duration > max_trip:
-        max_trip = trip_duration
+def get_trip_duration_metrics():
+    trip_duration_list = list(map(lambda duration: float(duration), column_to_list(data_list, 2)))
+    min_trip = 0.
+    max_trip = 0.
+    mean_trip = 0.
+    median_trip = 0.
+    
+    min_trip = trip_duration_list[0]
+    
+    for trip_duration in trip_duration_list:
+        if trip_duration > max_trip:
+            max_trip = trip_duration
+            
+        if trip_duration < min_trip:
+            min_trip = trip_duration
         
-    if trip_duration < min_trip:
-        min_trip = trip_duration
+        mean_trip += trip_duration
+        
+    trip_duration_list_len = len(trip_duration_list)
+        
+    mean_trip /= trip_duration_list_len
     
-    mean_trip += trip_duration
+    sorted_trip_duration_list = sorted(trip_duration_list)
     
-trip_duration_list_len = len(trip_duration_list)
-    
-mean_trip /= trip_duration_list_len
+    if trip_duration_list_len % 2 == 1:
+        median_pos = (trip_duration_list_len // 2) + 1
+        median_trip = sorted_trip_duration_list[median_pos]
+    else:
+        median_pos = trip_duration_list_len / 2
+        median_trip = (sorted_trip_duration_list[median_pos] + sorted_trip_duration_list[median_pos + 1]) / 2
+        
+    return min_trip, max_trip, mean_trip, median_trip 
 
-sorted_trip_duration_list = sorted(trip_duration_list)
-
-if trip_duration_list_len % 2 == 1:
-    median_pos = (trip_duration_list_len // 2) + 1
-    median_trip = sorted_trip_duration_list[median_pos]
-else:
-    median_pos = trip_duration_list_len / 2
-    median_trip = (sorted_trip_duration_list[medina_pos] + sorted_trip_duration_list[medina_pos + 1]) / 2
-
+min_trip, max_trip, mean_trip, median_trip = get_trip_duration_metrics()
 
 print("\nTASK 9: Printing the min, max, mean and median")
 print("Min: ", min_trip, "Max: ", max_trip, "Mean: ", mean_trip, "Median: ", median_trip)
@@ -286,7 +290,7 @@ def count_items(column_list):
     """
         Count occurrence of items dynamically
         Args:
-            param1: data set.
+            column_list: data set.
         Returns:
             Tuple of item types and item occurrences
     """
@@ -294,7 +298,7 @@ def count_items(column_list):
     count_items = []
     
     for item_type in item_types:
-        items = list(filter(lambda d: d.lower() == item_type.lower(), column_list))
+        items = list(filter(lambda data: data.lower() == item_type.lower(), column_list))
         count_items.append(len(items))
     
     return item_types, count_items
