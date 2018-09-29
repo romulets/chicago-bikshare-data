@@ -32,6 +32,9 @@ print("\n\nTASK 1: Printing the first 20 samples")
 # Let's change the data_list to remove the header from it.
 data_list = data_list[1:]
 
+for data in data_list[:20]:
+    print(data)
+
 # We can access the features through index
 # E.g. sample[6] to print gender or sample[-2]
 
@@ -41,6 +44,8 @@ input("Press Enter to continue...")
 
 print("\nTASK 2: Printing the genders of the first 20 samples")
 
+for data in data_list[:20]:
+    print(data[-2])
 
 # Cool! We can get the rows(samples) iterating with a for and the columns(features) by index.
 # But it's still hard to get a column in a list. Example: List with all genders
@@ -49,9 +54,16 @@ input("Press Enter to continue...")
 # TASK 3
 # TODO: Create a function to add the columns(features) of a list in another list in the same order
 def column_to_list(data, index):
-    column_list = []
-    # Tip: You can use a for to iterate over the samples, get the feature by index and append into a list
-    return column_list
+    """
+      Get a data set and returns just the desired column (removing header)
+      Args:
+          param1: The data set
+          param2: The position of the column
+      Returns:
+          List with the column's data
+
+    """
+    return list(map(lambda d: d[index], data))
 
 
 # Let's check with the genders if it's working (only the first 20)
@@ -68,9 +80,11 @@ input("Press Enter to continue...")
 # Now we know how to access the features, let's count how many Males and Females the dataset have
 # TASK 4
 # TODO: Count each gender. You should not use a function to do that.
-male = 0
-female = 0
-
+genders = column_to_list(data_list, -2)
+male_list = list(filter(lambda g: g.lower() == 'male', genders))
+female_list = list(filter(lambda g: g.lower() == 'female', genders))
+male = len(male_list)
+female = len(female_list)
 
 # Checking the result
 print("\nTASK 4: Printing how many males and females we found")
@@ -86,8 +100,20 @@ input("Press Enter to continue...")
 # TODO: Create a function to count the genders. Return a list
 # Should return a list with [count_male, counf_female] (e.g., [10, 15] means 10 Males, 15 Females)
 def count_gender(data_list):
-    male = 0
-    female = 0
+    """
+        Count the genders (Male and Female) in the dataset
+        Args:
+            param1: The data set
+        Returns:
+            List with the total of males and females in the dataset. 
+            First position male and second female
+    """
+    
+    genders = column_to_list(data_list, -2)
+    male_list = list(filter(lambda g: g.lower() == 'male', genders))
+    female_list = list(filter(lambda g: g.lower() == 'female', genders))
+    male = len(male_list)
+    female = len(female_list)
     return [male, female]
 
 
@@ -106,7 +132,22 @@ input("Press Enter to continue...")
 # TODO: Create a function to get the most popular gender and print the gender as string.
 # We expect to see "Male", "Female" or "Equal" as answer.
 def most_popular_gender(data_list):
+    """
+        Finds out what is the most popular gender in the data set
+        Args:
+            param1: The data set
+        Returns:
+            String answering the question, what is most common? If it's equal, answers 'Equal'
+    """
     answer = ""
+    male, female = count_gender(data_list)
+    if male > female:
+        answer = 'Male'
+    elif female > male:
+        answer = 'Female'
+    else:
+        answer = 'Equal'
+    
     return answer
 
 
@@ -135,6 +176,18 @@ input("Press Enter to continue...")
 # TODO: Plot a similar graph for user_types. Make sure the legend is correct.
 print("\nTASK 7: Check the chart!")
 
+user_types = column_to_list(data_list, -3)
+customer = len(list(filter(lambda u: u.lower() == 'customer', user_types)))
+dependent = len(list(filter(lambda u: u.lower() == 'dependent', user_types)))
+subscriber = len(list(filter(lambda u: u.lower() == 'subscriber', user_types)))
+
+y_pos = list(range(3))
+plt.bar(y_pos, [customer, dependent, subscriber])
+plt.ylabel('Quantity')
+plt.xlabel('User Type')
+plt.xticks(y_pos, ['Customer', 'Dependent', 'Subscriber'])
+plt.title('Quantity by User Type')
+plt.show(block=True)
 
 input("Press Enter to continue...")
 # TASK 8
@@ -142,7 +195,7 @@ input("Press Enter to continue...")
 male, female = count_gender(data_list)
 print("\nTASK 8: Why the following condition is False?")
 print("male + female == len(data_list):", male + female == len(data_list))
-answer = "Type your answer here."
+answer = "Because there are many rows without declared gender"
 print("Answer:", answer)
 
 # ------------ DO NOT CHANGE ANY CODE HERE ------------
@@ -154,11 +207,35 @@ input("Press Enter to continue...")
 # TASK 9
 # TODO: Find the Minimum, Maximum, Mean and Median trip duration.
 # You should not use ready functions to do that, like max() or min().
-trip_duration_list = column_to_list(data_list, 2)
+trip_duration_list = list(map(lambda x: float(x), column_to_list(data_list, 2)))
 min_trip = 0.
 max_trip = 0.
 mean_trip = 0.
 median_trip = 0.
+
+min_trip = trip_duration_list[0]
+
+for trip_duration in trip_duration_list:
+    if trip_duration > max_trip:
+        max_trip = trip_duration
+        
+    if trip_duration < min_trip:
+        min_trip = trip_duration
+    
+    mean_trip += trip_duration
+    
+trip_duration_list_len = len(trip_duration_list)
+    
+mean_trip /= trip_duration_list_len
+
+sorted_trip_duration_list = sorted(trip_duration_list)
+
+if trip_duration_list_len % 2 == 1:
+    median_pos = (trip_duration_list_len // 2) + 1
+    median_trip = sorted_trip_duration_list[median_pos]
+else:
+    median_pos = trip_duration_list_len / 2
+    median_trip = (sorted_trip_duration_list[medina_pos] + sorted_trip_duration_list[medina_pos + 1]) / 2
 
 
 print("\nTASK 9: Printing the min, max, mean and median")
@@ -175,7 +252,7 @@ input("Press Enter to continue...")
 # TASK 10
 # Gender is easy because usually only have a few options. How about start_stations? How many options does it have?
 # TODO: Check types how many start_stations do we have using set()
-user_types = set()
+user_types = list(set(column_to_list(data_list, 3)))
 
 print("\nTASK 10: Printing start stations:")
 print(len(user_types))
@@ -189,26 +266,37 @@ input("Press Enter to continue...")
 # TASK 11
 # Go back and make sure you documented your functions. Explain the input, output and what it do. Example:
 # def new_function(param1: int, param2: str) -> list:
-      """
-      Example function with annotations.
-      Args:
-          param1: The first parameter.
-          param2: The second parameter.
-      Returns:
-          List of X values
-
-      """
+#       """
+#       Example function with annotations.
+#       Args:
+#           param1: The first parameter.
+#           param2: The second parameter.
+#       Returns:
+#           List of X values
+#       """
 
 input("Press Enter to continue...")
 # TASK 12 - Challenge! (Optional)
 # TODO: Create a function to count user types without hardcoding the types
 # so we can use this function with a different kind of data.
 print("Will you face it?")
-answer = "no"
+answer = "yes"
 
 def count_items(column_list):
-    item_types = []
+    """
+        Count occurrence of items dynamically
+        Args:
+            param1: data set.
+        Returns:
+            Tuple of item types and item occurrences
+    """
+    item_types = list(set(column_list))
     count_items = []
+    
+    for item_type in item_types:
+        items = list(filter(lambda d: d.lower() == item_type.lower(), column_list))
+        count_items.append(len(items))
+    
     return item_types, count_items
 
 
