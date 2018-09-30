@@ -207,14 +207,19 @@ input("Press Enter to continue...")
 # TASK 9
 # TODO: Find the Minimum, Maximum, Mean and Median trip duration.
 # You should not use ready functions to do that, like max() or min().
-def get_trip_duration_metrics():
-    trip_duration_list = list(map(lambda duration: float(duration), column_to_list(data_list, 2)))
-    min_trip = 0.
-    max_trip = 0.
-    mean_trip = 0.
-    median_trip = 0.
+def get_trip_duration_metrics(trip_duration_list):
+    """
+        Gets the trip duration list, process it and returns the minimum, maximum, mean and median
+        Args:
+            trip_duration_list: The trip duration
+        Returns:
+            A list containing minimum, maximum, mean and median in this order
+    """
     
+    trip_duration_list = list(map(lambda duration: float(duration), trip_duration_list))
     min_trip = trip_duration_list[0]
+    max_trip = 0.
+    mean_trip = 0
     
     for trip_duration in trip_duration_list:
         if trip_duration > max_trip:
@@ -240,7 +245,7 @@ def get_trip_duration_metrics():
         
     return min_trip, max_trip, mean_trip, median_trip 
 
-min_trip, max_trip, mean_trip, median_trip = get_trip_duration_metrics()
+min_trip, max_trip, mean_trip, median_trip = get_trip_duration_metrics(column_to_list(data_list, 2))
 
 print("\nTASK 9: Printing the min, max, mean and median")
 print("Min: ", min_trip, "Max: ", max_trip, "Mean: ", mean_trip, "Median: ", median_trip)
